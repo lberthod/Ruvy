@@ -1,5 +1,6 @@
 {
   "hosting": {
+    "site": "ruvy-da318",
     "public": "dist",
     "ignore": [
       "firebase.json",

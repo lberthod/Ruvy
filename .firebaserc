@@ -1,5 +1,12 @@
 {
   "projects": {
     "default": "ruvy-da318"
+  },
+  "targets": {
+    "ruvy-da318": {
+      "hosting": {
+        "main": "ruvy-da318"
+      }
+    }
   }
 }
