@@ -1,1 +1,1 @@
-{"hosting":{"site":"ruvy-test","public":"dist","ignore":["firebase.json","**.*","**/node_modules/**"],"rewrites":[{"source":"**","destination":"/index.html"}]},"functions":{"source":"functions","runtime":"nodejs20","predeploy":["npm --prefix functions run lint"]},"database":{"rules":"database.rules.json"}}
+{"hosting":{"site":"ruvy-test","public":"dist","ignore":["firebase.json","**.*","**/node_modules/**"],"rewrites":[{"source":"**","destination":"/index.html"}]},"functions":{"source":"functions","runtime":"nodejs20"},"database":{"rules":"database.rules.json"}}
