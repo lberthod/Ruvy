@@ -1,0 +1,34 @@
+[package]
+name = "rust-learning"
+version = "0.1.0"
+edition = "2021"
+
+[[bin]]
+name = "hello-world"
+path = "01-hello-world.rs"
+
+[[bin]]
+name = "variables"
+path = "02-variables-and-types.rs"
+
+[[bin]]
+name = "functions"
+path = "03-functions.rs"
+
+[[bin]]
+name = "control-flow"
+path = "04-control-flow.rs"
+
+[[bin]]
+name = "ownership"
+path = "05-ownership.rs"
+
+[[bin]]
+name = "structs-enums"
+path = "06-structs-and-enums.rs"
+
+[[bin]]
+name = "error-handling"
+path = "07-error-handling.rs"
+
+[dependencies]
