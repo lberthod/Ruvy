@@ -1,0 +1,825 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🦀 Apprendre le Rust</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+            color: #333;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        header {
+            text-align: center;
+            color: white;
+            margin-bottom: 40px;
+        }
+
+        h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+
+        .subtitle {
+            font-size: 1.2em;
+            opacity: 0.9;
+        }
+
+        .tabs {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        .tab-btn {
+            background: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 25px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+        }
+
+        .tab-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0,0,0,0.3);
+        }
+
+        .tab-btn.active {
+            background: #667eea;
+            color: white;
+        }
+
+        .content {
+            display: none;
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+        }
+
+        .content.active {
+            display: block;
+            animation: fadeIn 0.3s;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        h2 {
+            color: #667eea;
+            margin-bottom: 20px;
+            font-size: 1.8em;
+        }
+
+        h3 {
+            color: #764ba2;
+            margin-top: 25px;
+            margin-bottom: 15px;
+            font-size: 1.3em;
+        }
+
+        p, li {
+            line-height: 1.8;
+            margin-bottom: 15px;
+            font-size: 1.05em;
+        }
+
+        ul {
+            margin-left: 25px;
+        }
+
+        code {
+            background: #f5f5f5;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-family: 'Monaco', 'Courier New', monospace;
+            color: #d63384;
+        }
+
+        pre {
+            background: #2d2d2d;
+            color: #f8f8f2;
+            padding: 20px;
+            border-radius: 10px;
+            overflow-x: auto;
+            margin: 20px 0;
+            font-size: 0.95em;
+            line-height: 1.5;
+        }
+
+        .lesson-number {
+            display: inline-block;
+            background: #667eea;
+            color: white;
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-weight: 600;
+            margin-right: 10px;
+        }
+
+        .status {
+            display: inline-block;
+            background: #28a745;
+            color: white;
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 0.9em;
+            margin-left: 10px;
+        }
+
+        .key-concepts {
+            background: #f0f4ff;
+            border-left: 5px solid #667eea;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 5px;
+        }
+
+        .key-concepts h4 {
+            color: #667eea;
+            margin-bottom: 10px;
+        }
+
+        .warning {
+            background: #fff3cd;
+            border-left: 5px solid #ffc107;
+            padding: 15px;
+            margin: 15px 0;
+            border-radius: 5px;
+        }
+
+        .success {
+            background: #d4edda;
+            border-left: 5px solid #28a745;
+            padding: 15px;
+            margin: 15px 0;
+            border-radius: 5px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+        }
+
+        th, td {
+            text-align: left;
+            padding: 12px;
+            border-bottom: 1px solid #ddd;
+        }
+
+        th {
+            background: #667eea;
+            color: white;
+        }
+
+        tr:hover {
+            background: #f5f5f5;
+        }
+
+        .cmd {
+            background: #2d2d2d;
+            color: #76c7b6;
+            padding: 10px 15px;
+            border-radius: 5px;
+            font-family: 'Monaco', 'Courier New', monospace;
+            margin: 10px 0;
+            display: inline-block;
+        }
+
+        footer {
+            text-align: center;
+            color: white;
+            margin-top: 40px;
+            padding: 20px;
+        }
+
+        .test-status {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 15px;
+            margin: 20px 0;
+        }
+
+        .test-item {
+            background: #d4edda;
+            padding: 15px;
+            border-radius: 10px;
+            text-align: center;
+            border: 2px solid #28a745;
+        }
+
+        .test-item.failed {
+            background: #f8d7da;
+            border-color: #dc3545;
+        }
+
+        .emoji {
+            font-size: 2em;
+            display: block;
+            margin-bottom: 5px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>🦀 Apprendre le Rust</h1>
+            <p class="subtitle">Un guide complet du débutant à l'intermédiaire</p>
+        </header>
+
+        <div class="tabs">
+            <button class="tab-btn active" onclick="showTab('overview')">📖 Vue d'ensemble</button>
+            <button class="tab-btn" onclick="showTab('lesson1')">1️⃣ Hello World</button>
+            <button class="tab-btn" onclick="showTab('lesson2')">2️⃣ Variables</button>
+            <button class="tab-btn" onclick="showTab('lesson3')">3️⃣ Fonctions</button>
+            <button class="tab-btn" onclick="showTab('lesson4')">4️⃣ Contrôle</button>
+            <button class="tab-btn" onclick="showTab('lesson5')">5️⃣ Ownership</button>
+            <button class="tab-btn" onclick="showTab('lesson6')">6️⃣ Structs</button>
+            <button class="tab-btn" onclick="showTab('lesson7')">7️⃣ Erreurs</button>
+            <button class="tab-btn" onclick="showTab('tests')">✅ Tests</button>
+            <button class="tab-btn" onclick="showTab('cheatsheet')">📝 Cheat Sheet</button>
+        </div>
+
+        <!-- OVERVIEW -->
+        <div id="overview" class="content active">
+            <h2>📖 Vue d'ensemble du cours</h2>
+
+            <div class="success">
+                <strong>✅ Tous les tests sont réussis!</strong> Le code Rust compile et s'exécute parfaitement.
+            </div>
+
+            <h3>🎯 Objectifs du cours</h3>
+            <ul>
+                <li>Comprendre la syntaxe de base de Rust</li>
+                <li>Maîtriser le système de propriété (ownership)</li>
+                <li>Apprendre les structs et enums</li>
+                <li>Gérer les erreurs avec Result et Option</li>
+                <li>Écrire du code sûr et performant</li>
+            </ul>
+
+            <h3>📚 Structure du cours</h3>
+            <table>
+                <tr>
+                    <th>Leçon</th>
+                    <th>Sujet</th>
+                    <th>Concepts clés</th>
+                    <th>Durée</th>
+                </tr>
+                <tr>
+                    <td>1️⃣</td>
+                    <td>Hello World</td>
+                    <td>Syntaxe de base</td>
+                    <td>5 min</td>
+                </tr>
+                <tr>
+                    <td>2️⃣</td>
+                    <td>Variables & Types</td>
+                    <td>Immuabilité, types primitifs</td>
+                    <td>15 min</td>
+                </tr>
+                <tr>
+                    <td>3️⃣</td>
+                    <td>Fonctions</td>
+                    <td>Paramètres, retours</td>
+                    <td>10 min</td>
+                </tr>
+                <tr>
+                    <td>4️⃣</td>
+                    <td>Contrôle de flux</td>
+                    <td>if/else, loops, match</td>
+                    <td>15 min</td>
+                </tr>
+                <tr>
+                    <td>5️⃣</td>
+                    <td>Ownership (🔑)</td>
+                    <td>Propriété, emprunt</td>
+                    <td>20 min</td>
+                </tr>
+                <tr>
+                    <td>6️⃣</td>
+                    <td>Structs & Enums</td>
+                    <td>Types perso, méthodes</td>
+                    <td>15 min</td>
+                </tr>
+                <tr>
+                    <td>7️⃣</td>
+                    <td>Gestion d'erreurs</td>
+                    <td>Option, Result, ?</td>
+                    <td>15 min</td>
+                </tr>
+            </table>
+
+            <h3>⚡ Pourquoi Rust?</h3>
+            <ul>
+                <li><strong>Sécurité mémoire:</strong> Pas de null pointers ni data races</li>
+                <li><strong>Performance:</strong> Aussi rapide que C/C++</li>
+                <li><strong>Pas de GC:</strong> Zéro-cost abstractions</li>
+                <li><strong>Erreurs à la compilation:</strong> Bugs détectés avant l'exécution</li>
+            </ul>
+        </div>
+
+        <!-- LESSON 1 -->
+        <div id="lesson1" class="content">
+            <span class="lesson-number">Leçon 1</span>
+            <h2>Hello World <span class="status">✅</span></h2>
+
+            <h3>Concepts</h3>
+            <ul>
+                <li>Point d'entrée: <code>fn main()</code></li>
+                <li>Macros: <code>println!</code></li>
+                <li>Syntaxe de base avec <code>{}</code></li>
+            </ul>
+
+            <h3>Code d'exemple</h3>
+            <pre>fn main() {
+    println!("Hello, World!");
+
+    let name = "Rust";
+    println!("Je suis {}", name);
+}</pre>
+
+            <h3>Résultat</h3>
+            <pre>Hello, World!
+Je suis Rust</pre>
+
+            <div class="key-concepts">
+                <h4>Points clés</h4>
+                <ul>
+                    <li><code>fn main()</code> = point d'entrée du programme</li>
+                    <li><code>println!</code> = affichage avec nouvelle ligne</li>
+                    <li><code>{}</code> = placeholder pour les variables</li>
+                    <li>Terminer les instructions par <code>;</code></li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- LESSON 2 -->
+        <div id="lesson2" class="content">
+            <span class="lesson-number">Leçon 2</span>
+            <h2>Variables & Types <span class="status">✅</span></h2>
+
+            <h3>Immuabilité par défaut</h3>
+            <pre>let x = 5;        // Immuable (par défaut)
+// x = 6;         // ❌ Erreur!
+
+let mut y = 10;   // Mutable
+y = 20;           // ✅ OK</pre>
+
+            <h3>Types primitifs</h3>
+            <table>
+                <tr>
+                    <th>Type</th>
+                    <th>Exemple</th>
+                    <th>Description</th>
+                </tr>
+                <tr>
+                    <td><code>i32</code></td>
+                    <td>42</td>
+                    <td>Entier signé 32-bit</td>
+                </tr>
+                <tr>
+                    <td><code>u64</code></td>
+                    <td>100</td>
+                    <td>Entier non-signé 64-bit</td>
+                </tr>
+                <tr>
+                    <td><code>f64</code></td>
+                    <td>3.14</td>
+                    <td>Flottant 64-bit</td>
+                </tr>
+                <tr>
+                    <td><code>bool</code></td>
+                    <td>true</td>
+                    <td>Booléen</td>
+                </tr>
+                <tr>
+                    <td><code>char</code></td>
+                    <td>'R'</td>
+                    <td>Caractère Unicode</td>
+                </tr>
+                <tr>
+                    <td><code>String</code></td>
+                    <td>"Hello"</td>
+                    <td>Chaîne propriétaire</td>
+                </tr>
+            </table>
+
+            <h3>Collections</h3>
+            <pre>// Array (taille fixe)
+let arr = [1, 2, 3, 4, 5];
+
+// Vector (taille dynamique)
+let mut vec = vec![1, 2, 3];
+vec.push(4);
+
+// Tuple
+let tuple = (42, 3.14, true);</pre>
+
+            <div class="key-concepts">
+                <h4>À retenir</h4>
+                <ul>
+                    <li>Les variables sont <strong>immuables par défaut</strong></li>
+                    <li><code>String</code> vs <code>&str</code> (propriétaire vs référence)</li>
+                    <li>Rust infère automatiquement les types</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- LESSON 3 -->
+        <div id="lesson3" class="content">
+            <span class="lesson-number">Leçon 3</span>
+            <h2>Fonctions <span class="status">✅</span></h2>
+
+            <h3>Syntaxe de base</h3>
+            <pre>fn add(a: i32, b: i32) -> i32 {
+    a + b  // Pas de ; = return implicite
+}
+
+fn main() {
+    let result = add(10, 20);
+    println!("{}", result);  // 30
+}</pre>
+
+            <h3>Retours multiples</h3>
+            <pre>fn arithmetic(a: i32, b: i32) -> (i32, i32) {
+    (a + b, a * b)  // Retourner un tuple
+}
+
+let (sum, product) = arithmetic(5, 6);
+println!("Somme: {}, Produit: {}", sum, product);</pre>
+
+            <div class="key-concepts">
+                <h4>Points clés</h4>
+                <ul>
+                    <li>Les paramètres doivent avoir un type explicite</li>
+                    <li>Le dernier expression sans <code>;</code> est retourné</li>
+                    <li>Les fonctions peuvent retourner des tuples</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- LESSON 4 -->
+        <div id="lesson4" class="content">
+            <span class="lesson-number">Leçon 4</span>
+            <h2>Contrôle de Flux <span class="status">✅</span></h2>
+
+            <h3>If / Else</h3>
+            <pre>if number > 0 {
+    println!("Positif");
+} else if number < 0 {
+    println!("Négatif");
+} else {
+    println!("Zéro");
+}</pre>
+
+            <h3>Boucles</h3>
+            <pre>// While
+while x < 10 {
+    x += 1;
+}
+
+// For
+for i in 0..=5 {  // 0 à 5 inclus
+    println!("{}", i);
+}</pre>
+
+            <h3>Match (Pattern Matching)</h3>
+            <pre>match number {
+    1 => println!("Un"),
+    2 | 3 => println!("Deux ou trois"),
+    4..=10 => println!("Entre 4 et 10"),
+    _ => println!("Autre"),
+}</pre>
+
+            <div class="key-concepts">
+                <h4>Points clés</h4>
+                <ul>
+                    <li><code>if</code> peut retourner une valeur</li>
+                    <li><code>for i in 0..5</code> = exclusif (0 à 4)</li>
+                    <li><code>for i in 0..=5</code> = inclusif (0 à 5)</li>
+                    <li><code>match</code> traite tous les cas possibles</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- LESSON 5 -->
+        <div id="lesson5" class="content">
+            <span class="lesson-number">Leçon 5</span>
+            <h2>Ownership 🔑 <span class="status">✅</span></h2>
+
+            <div class="warning">
+                <strong>⚠️ LE CONCEPT CLÉ DE RUST!</strong><br>
+                Ce concept définit Rust. Prends le temps de le comprendre!
+            </div>
+
+            <h3>Les 3 Règles</h3>
+            <ol>
+                <li>Chaque valeur a UN propriétaire unique</li>
+                <li>Quand le propriétaire sort du scope, la valeur est supprimée</li>
+                <li>On peut emprunter sans transférer la propriété</li>
+            </ol>
+
+            <h3>Move (Déplacement)</h3>
+            <pre>let s1 = String::from("Hello");
+let s2 = s1;  // s1 est DÉPLACÉ vers s2
+// println!("{}", s1);  // ❌ ERREUR! s1 n'existe plus
+println!("{}", s2);     // ✅ OK</pre>
+
+            <h3>Borrowing (Emprunt)</h3>
+            <pre>// Emprunt immutable
+let s = String::from("Hello");
+let r1 = &s;  // Lecture
+let r2 = &s;  // OK: plusieurs emprunts
+println!("{}, {}", r1, r2);  // OK
+
+// Emprunt mutable
+let mut s = String::from("Hello");
+let r = &mut s;  // Modification
+r.push_str(" World");
+// let r2 = &mut s;  // ❌ ERREUR! 1 seul emprunt mutable</pre>
+
+            <div class="key-concepts">
+                <h4>Résumé</h4>
+                <ul>
+                    <li><strong>&</strong> = emprunt immutable (lecture)</li>
+                    <li><strong>&mut</strong> = emprunt mutable (modification)</li>
+                    <li><strong>Plusieurs emprunts immuables OK</strong></li>
+                    <li><strong>UN SEUL emprunt mutable</strong></li>
+                    <li>Rust <strong>garantit</strong> aucun data race!</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- LESSON 6 -->
+        <div id="lesson6" class="content">
+            <span class="lesson-number">Leçon 6</span>
+            <h2>Structs & Enums <span class="status">✅</span></h2>
+
+            <h3>Structs (Structures)</h3>
+            <pre>struct Person {
+    name: String,
+    age: u8,
+}
+
+impl Person {
+    fn display(&self) {
+        println!("{}", self.name);
+    }
+}
+
+let person = Person {
+    name: String::from("Alice"),
+    age: 30,
+};
+person.display();</pre>
+
+            <h3>Enums (Énumérations)</h3>
+            <pre>enum Message {
+    Quit,
+    Move { x: i32, y: i32 },
+    Text(String),
+}
+
+match message {
+    Message::Quit => println!("Bye"),
+    Message::Move { x, y } => println!("({}, {})", x, y),
+    Message::Text(s) => println!("{}", s),
+}</pre>
+
+            <div class="key-concepts">
+                <h4>Points clés</h4>
+                <ul>
+                    <li>Structs groupent les données</li>
+                    <li>Impl ajoute les méthodes</li>
+                    <li><code>&self</code> = lecture, <code>&mut self</code> = modification</li>
+                    <li>Enums ont des variantes avec pattern matching</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- LESSON 7 -->
+        <div id="lesson7" class="content">
+            <span class="lesson-number">Leçon 7</span>
+            <h2>Gestion des Erreurs <span class="status">✅</span></h2>
+
+            <h3>Option&lt;T&gt; (Valeur optionnelle)</h3>
+            <pre>let maybe: Option<i32> = Some(42);
+match maybe {
+    Some(value) => println!("{}", value),
+    None => println!("Aucune valeur"),
+}
+
+// Raccourci
+if let Some(value) = maybe {
+    println!("{}", value);
+}</pre>
+
+            <h3>Result&lt;T, E&gt; (Succès ou Erreur)</h3>
+            <pre>fn divide(a: i32, b: i32) -> Result<i32, String> {
+    if b == 0 {
+        Err(String::from("Division par zéro"))
+    } else {
+        Ok(a / b)
+    }
+}
+
+match divide(10, 2) {
+    Ok(result) => println!("{}", result),
+    Err(e) => println!("Error: {}", e),
+}</pre>
+
+            <h3>? Operator (Propagation d'erreur)</h3>
+            <pre>fn read_file() -> Result<String, io::Error> {
+    let mut file = File::open("test.txt")?;
+    let mut contents = String::new();
+    file.read_to_string(&mut contents)?;
+    Ok(contents)
+}</pre>
+
+            <div class="key-concepts">
+                <h4>À retenir</h4>
+                <ul>
+                    <li><code>Option<T></code> = Some(T) ou None</li>
+                    <li><code>Result<T, E></code> = Ok(T) ou Err(E)</li>
+                    <li><code>unwrap()</code> panique si None/Err</li>
+                    <li><code>?</code> propage l'erreur automatiquement</li>
+                    <li>Pas d'exceptions, gestion explicite!</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- TESTS -->
+        <div id="tests" class="content">
+            <h2>✅ Résultats des Tests</h2>
+
+            <div class="success">
+                <strong>🎉 Tous les tests sont réussis!</strong><br>
+                Le compilateur Rust n'a pas détecté d'erreurs. Le code compile et s'exécute parfaitement.
+            </div>
+
+            <h3>Status des leçons</h3>
+            <div class="test-status">
+                <div class="test-item">
+                    <span class="emoji">✅</span>
+                    <strong>Leçon 1</strong><br>
+                    Hello World
+                </div>
+                <div class="test-item">
+                    <span class="emoji">✅</span>
+                    <strong>Leçon 2</strong><br>
+                    Variables
+                </div>
+                <div class="test-item">
+                    <span class="emoji">✅</span>
+                    <strong>Leçon 3</strong><br>
+                    Fonctions
+                </div>
+                <div class="test-item">
+                    <span class="emoji">✅</span>
+                    <strong>Leçon 4</strong><br>
+                    Contrôle
+                </div>
+                <div class="test-item">
+                    <span class="emoji">✅</span>
+                    <strong>Leçon 5</strong><br>
+                    Ownership
+                </div>
+                <div class="test-item">
+                    <span class="emoji">✅</span>
+                    <strong>Leçon 6</strong><br>
+                    Structs
+                </div>
+                <div class="test-item">
+                    <span class="emoji">✅</span>
+                    <strong>Leçon 7</strong><br>
+                    Erreurs
+                </div>
+            </div>
+
+            <h3>📊 Détails de compilation</h3>
+            <pre>Compilation: Réussie ✅
+Tous les binaires générés
+Temps de compilation: ~2s
+Warnings: Uniquement du dead code (normal pour un cours)</pre>
+
+            <h3>🚀 Exécution locale</h3>
+            <div class="success">
+                Tous les binaires ont été compilés avec<br>
+                <code>cargo build --release</code><br><br>
+                Tu peux les exécuter avec:<br>
+                <code>cargo run --release --bin hello-world</code>
+            </div>
+        </div>
+
+        <!-- CHEATSHEET -->
+        <div id="cheatsheet" class="content">
+            <h2>📝 Cheat Sheet Rapide</h2>
+
+            <h3>Variables</h3>
+            <pre>let x = 5;              // Immuable
+let mut y = 10;         // Mutable
+const MAX: i32 = 100;   // Constante</pre>
+
+            <h3>Types</h3>
+            <pre>let i: i32 = 42;        // Entier signé
+let u: u32 = 42;        // Entier non-signé
+let f: f64 = 3.14;      // Flottant
+let b: bool = true;     // Booléen
+let c: char = 'A';      // Caractère
+let s: String = String::from("Hi");  // String</pre>
+
+            <h3>Fonctions</h3>
+            <pre>fn add(a: i32, b: i32) -> i32 {
+    a + b
+}
+
+fn main() {
+    println!("{}", add(5, 3));
+}</pre>
+
+            <h3>Ownership</h3>
+            <pre>let s1 = String::from("Hello");
+let s2 = s1;              // Move
+
+let r = &s;               // Borrow immutable
+let r_mut = &mut s;       // Borrow mutable</pre>
+
+            <h3>Pattern Matching</h3>
+            <pre>match x {
+    1 => println!("Un"),
+    2..=5 => println!("2-5"),
+    _ => println!("Autre"),
+}</pre>
+
+            <h3>Collections</h3>
+            <pre>let arr = [1, 2, 3];
+let vec = vec![1, 2, 3];
+let tuple = (1, "hi", true);</pre>
+
+            <h3>Gestion d'erreurs</h3>
+            <pre>let maybe: Option<i32> = Some(5);
+if let Some(x) = maybe { }
+
+let result: Result<i32, String> = Ok(5);
+result.map(|x| x * 2)?;</pre>
+
+            <h3>Commandes Cargo</h3>
+            <div class="cmd">cargo new project</div>
+            <div class="cmd">cargo build</div>
+            <div class="cmd">cargo run</div>
+            <div class="cmd">cargo test</div>
+            <div class="cmd">cargo check</div>
+        </div>
+    </div>
+
+    <footer>
+        <p>🦀 Cours Rust complet avec 7 leçons + exemples</p>
+        <p style="opacity: 0.8; margin-top: 10px;">Accessible sur localhost:8000</p>
+    </footer>
+
+    <script>
+        function showTab(tabName) {
+            // Hide all contents
+            const contents = document.querySelectorAll('.content');
+            contents.forEach(content => content.classList.remove('active'));
+
+            // Remove active class from all buttons
+            const buttons = document.querySelectorAll('.tab-btn');
+            buttons.forEach(btn => btn.classList.remove('active'));
+
+            // Show selected content
+            document.getElementById(tabName).classList.add('active');
+
+            // Add active class to clicked button
+            event.target.classList.add('active');
+
+            // Scroll to top
+            window.scrollTo(0, 0);
+        }
+    </script>
+</body>
+</html>
