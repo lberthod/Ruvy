@@ -24,3 +24,13 @@ firebase-debug.log
 *.njsproj
 *.sln
 *.sw?
+# Rust binaries from rustc
+rust-learning/01-hello-world
+rust-learning/02-variables-and-types
+rust-learning/03-functions
+rust-learning/04-control-flow
+rust-learning/05-ownership
+rust-learning/06-structs-and-enums
+rust-learning/07-error-handling
+rust-learning/target/
+*.pdb
