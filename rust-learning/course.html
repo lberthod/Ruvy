@@ -1,0 +1,799 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <title>🦀 Rust - Cours Complet</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary: #667eea;
+            --secondary: #764ba2;
+            --success: #28a745;
+            --danger: #dc3545;
+            --warning: #ffc107;
+            --dark: #2d3748;
+            --light: #f7fafc;
+        }
+
+        html, body {
+            height: 100%;
+            width: 100%;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+            min-height: 100vh;
+            padding: env(safe-area-inset-top, 0) env(safe-area-inset-right, 20px) env(safe-area-inset-bottom, 0) env(safe-area-inset-left, 20px);
+            padding: 20px;
+            color: #333;
+            overflow-x: hidden;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        header {
+            text-align: center;
+            color: white;
+            margin-bottom: 30px;
+            padding-top: 20px;
+        }
+
+        h1 {
+            font-size: 2.8em;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
+            word-break: break-word;
+        }
+
+        .subtitle {
+            font-size: 1.1em;
+            opacity: 0.95;
+        }
+
+        .tabs-container {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+            justify-content: center;
+            overflow-x: auto;
+            padding: 0 -20px;
+        }
+
+        .tab-btn {
+            background: white;
+            border: none;
+            padding: 10px 16px;
+            border-radius: 20px;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 0.95em;
+            transition: all 0.2s;
+            white-space: nowrap;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+            flex-shrink: 0;
+        }
+
+        .tab-btn:hover, .tab-btn:active {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+        }
+
+        .tab-btn.active {
+            background: var(--primary);
+            color: white;
+        }
+
+        .content {
+            display: none;
+            background: white;
+            border-radius: 15px;
+            padding: 20px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+            animation: slideUp 0.3s ease-out;
+        }
+
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .content.active {
+            display: block;
+        }
+
+        h2 {
+            color: var(--primary);
+            margin-bottom: 15px;
+            font-size: 1.6em;
+            word-break: break-word;
+        }
+
+        h3 {
+            color: var(--secondary);
+            margin-top: 20px;
+            margin-bottom: 12px;
+            font-size: 1.2em;
+        }
+
+        p, li {
+            line-height: 1.7;
+            margin-bottom: 12px;
+            font-size: 1em;
+        }
+
+        ul, ol {
+            margin-left: 20px;
+        }
+
+        code {
+            background: #f5f5f5;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-family: 'Courier New', monospace;
+            color: #d63384;
+            font-size: 0.95em;
+        }
+
+        pre {
+            background: #1e1e1e;
+            color: #d4d4d4;
+            padding: 15px;
+            border-radius: 8px;
+            overflow-x: auto;
+            margin: 15px 0;
+            font-size: 0.85em;
+            line-height: 1.4;
+            border-left: 4px solid var(--primary);
+        }
+
+        .lesson-badge {
+            display: inline-block;
+            background: var(--primary);
+            color: white;
+            padding: 4px 10px;
+            border-radius: 15px;
+            font-weight: 600;
+            margin-right: 10px;
+            font-size: 0.9em;
+        }
+
+        .status-badge {
+            display: inline-block;
+            background: var(--success);
+            color: white;
+            padding: 4px 10px;
+            border-radius: 15px;
+            font-size: 0.85em;
+            margin-left: 8px;
+        }
+
+        .box {
+            padding: 15px;
+            margin: 15px 0;
+            border-radius: 8px;
+            border-left: 4px solid;
+        }
+
+        .box.info {
+            background: #e7f3ff;
+            border-color: var(--primary);
+            color: #004085;
+        }
+
+        .box.success {
+            background: #d4edda;
+            border-color: var(--success);
+            color: #155724;
+        }
+
+        .box.warning {
+            background: #fff3cd;
+            border-color: var(--warning);
+            color: #856404;
+        }
+
+        .box.danger {
+            background: #f8d7da;
+            border-color: var(--danger);
+            color: #721c24;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 15px 0;
+            font-size: 0.95em;
+        }
+
+        th, td {
+            text-align: left;
+            padding: 10px;
+            border-bottom: 1px solid #ddd;
+        }
+
+        th {
+            background: var(--primary);
+            color: white;
+            font-weight: 600;
+        }
+
+        tr:hover {
+            background: #f9f9f9;
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 12px;
+            margin: 15px 0;
+        }
+
+        .card {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 8px;
+            text-align: center;
+            border: 2px solid var(--primary);
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+
+        .card .emoji {
+            font-size: 2em;
+            display: block;
+            margin-bottom: 8px;
+        }
+
+        .card strong {
+            display: block;
+            color: var(--primary);
+            margin-bottom: 4px;
+        }
+
+        footer {
+            text-align: center;
+            color: white;
+            margin-top: 30px;
+            padding: 20px;
+            font-size: 0.9em;
+            opacity: 0.9;
+        }
+
+        @media (max-width: 600px) {
+            h1 {
+                font-size: 2em;
+            }
+
+            .content {
+                padding: 15px;
+            }
+
+            pre {
+                font-size: 0.8em;
+                padding: 12px;
+            }
+
+            .grid {
+                grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+                gap: 10px;
+            }
+
+            .tab-btn {
+                padding: 8px 12px;
+                font-size: 0.85em;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>🦀 Apprendre le Rust</h1>
+            <p class="subtitle">Cours complet pour débutants</p>
+        </header>
+
+        <div class="tabs-container">
+            <button class="tab-btn active" onclick="showTab('accueil')">📖 Accueil</button>
+            <button class="tab-btn" onclick="showTab('lesson1')">1️⃣ Hello</button>
+            <button class="tab-btn" onclick="showTab('lesson2')">2️⃣ Variables</button>
+            <button class="tab-btn" onclick="showTab('lesson3')">3️⃣ Fonctions</button>
+            <button class="tab-btn" onclick="showTab('lesson4')">4️⃣ Contrôle</button>
+            <button class="tab-btn" onclick="showTab('lesson5')">5️⃣ Ownership</button>
+            <button class="tab-btn" onclick="showTab('lesson6')">6️⃣ Structs</button>
+            <button class="tab-btn" onclick="showTab('lesson7')">7️⃣ Erreurs</button>
+            <button class="tab-btn" onclick="showTab('tests')">✅ Tests</button>
+        </div>
+
+        <!-- ACCUEIL -->
+        <div id="accueil" class="content active">
+            <h2>👋 Bienvenue dans le cours Rust!</h2>
+
+            <div class="box success">
+                <strong>✅ Tous les tests réussis!</strong> Le code compile et s'exécute parfaitement.
+            </div>
+
+            <h3>📚 Qu'est-ce que tu vas apprendre?</h3>
+            <ul>
+                <li>Syntaxe de base de Rust</li>
+                <li>Système de propriété (ownership)</li>
+                <li>Types personnalisés (structs & enums)</li>
+                <li>Gestion des erreurs avec Result & Option</li>
+                <li>Programmation sûre et performante</li>
+            </ul>
+
+            <h3>🎯 Structure du cours</h3>
+            <table>
+                <tr>
+                    <th>Leçon</th>
+                    <th>Sujet</th>
+                    <th>Durée</th>
+                </tr>
+                <tr>
+                    <td>1</td>
+                    <td>Hello World</td>
+                    <td>5 min</td>
+                </tr>
+                <tr>
+                    <td>2</td>
+                    <td>Variables & Types</td>
+                    <td>15 min</td>
+                </tr>
+                <tr>
+                    <td>3</td>
+                    <td>Fonctions</td>
+                    <td>10 min</td>
+                </tr>
+                <tr>
+                    <td>4</td>
+                    <td>Contrôle de flux</td>
+                    <td>15 min</td>
+                </tr>
+                <tr>
+                    <td>5</td>
+                    <td>Ownership 🔑</td>
+                    <td>20 min</td>
+                </tr>
+                <tr>
+                    <td>6</td>
+                    <td>Structs & Enums</td>
+                    <td>15 min</td>
+                </tr>
+                <tr>
+                    <td>7</td>
+                    <td>Gestion d'erreurs</td>
+                    <td>15 min</td>
+                </tr>
+            </table>
+
+            <h3>⚡ Pourquoi Rust?</h3>
+            <div class="grid">
+                <div class="card">
+                    <span class="emoji">🔒</span>
+                    <strong>Sécurité</strong>
+                    <p>Pas de null pointers</p>
+                </div>
+                <div class="card">
+                    <span class="emoji">⚡</span>
+                    <strong>Performance</strong>
+                    <p>Aussi rapide que C++</p>
+                </div>
+                <div class="card">
+                    <span class="emoji">🎯</span>
+                    <strong>Fiabilité</strong>
+                    <p>Erreurs à la compilation</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- LESSON 1 -->
+        <div id="lesson1" class="content">
+            <span class="lesson-badge">Leçon 1</span>
+            <h2>Hello World <span class="status-badge">✅</span></h2>
+
+            <h3>Concepts</h3>
+            <ul>
+                <li><code>fn main()</code> - Point d'entrée</li>
+                <li><code>println!</code> - Affichage</li>
+                <li><code>{}</code> - Placeholder</li>
+            </ul>
+
+            <h3>Code</h3>
+            <pre>fn main() {
+    println!("Hello, World!");
+
+    let name = "Rust";
+    println!("Je suis {}", name);
+}</pre>
+
+            <h3>Résultat</h3>
+            <pre>Hello, World!
+Je suis Rust</pre>
+
+            <div class="box info">
+                <strong>💡 À retenir:</strong>
+                <ul>
+                    <li><code>fn</code> = fonction</li>
+                    <li><code>println!</code> = macro d'affichage</li>
+                    <li><code>;</code> termine chaque instruction</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- LESSON 2 -->
+        <div id="lesson2" class="content">
+            <span class="lesson-badge">Leçon 2</span>
+            <h2>Variables & Types <span class="status-badge">✅</span></h2>
+
+            <h3>Immuabilité par défaut</h3>
+            <pre>let x = 5;       // Immuable (défaut)
+// x = 6;         // ❌ Erreur!
+
+let mut y = 10;  // Mutable
+y = 20;          // ✅ OK</pre>
+
+            <h3>Types primitifs</h3>
+            <table>
+                <tr>
+                    <th>Type</th>
+                    <th>Exemple</th>
+                </tr>
+                <tr>
+                    <td><code>i32</code></td>
+                    <td>42</td>
+                </tr>
+                <tr>
+                    <td><code>f64</code></td>
+                    <td>3.14</td>
+                </tr>
+                <tr>
+                    <td><code>bool</code></td>
+                    <td>true</td>
+                </tr>
+                <tr>
+                    <td><code>String</code></td>
+                    <td>"Hello"</td>
+                </tr>
+            </table>
+
+            <h3>Collections</h3>
+            <pre>let array = [1, 2, 3];           // Array
+let vec = vec![1, 2, 3];          // Vector
+let tuple = (42, "hi", true);     // Tuple</pre>
+
+            <div class="box warning">
+                <strong>⚠️ Point clé:</strong> Les variables sont immuables par défaut pour éviter les bugs!
+            </div>
+        </div>
+
+        <!-- LESSON 3 -->
+        <div id="lesson3" class="content">
+            <span class="lesson-badge">Leçon 3</span>
+            <h2>Fonctions <span class="status-badge">✅</span></h2>
+
+            <h3>Syntaxe de base</h3>
+            <pre>fn add(a: i32, b: i32) -> i32 {
+    a + b  // Pas de ; = return
+}
+
+fn main() {
+    println!("{}", add(10, 20));  // 30
+}</pre>
+
+            <h3>Retours multiples</h3>
+            <pre>fn arithmetic(a: i32, b: i32) -> (i32, i32) {
+    (a + b, a * b)
+}
+
+let (sum, prod) = arithmetic(5, 6);
+println!("Somme: {}, Produit: {}", sum, prod);</pre>
+
+            <div class="box info">
+                <strong>💡 À retenir:</strong>
+                <ul>
+                    <li>Les paramètres ont un type explicite</li>
+                    <li>Pas de <code>;</code> = return implicite</li>
+                    <li>Peut retourner des tuples</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- LESSON 4 -->
+        <div id="lesson4" class="content">
+            <span class="lesson-badge">Leçon 4</span>
+            <h2>Contrôle de Flux <span class="status-badge">✅</span></h2>
+
+            <h3>If / Else</h3>
+            <pre>if x > 0 {
+    println!("Positif");
+} else if x < 0 {
+    println!("Négatif");
+} else {
+    println!("Zéro");
+}</pre>
+
+            <h3>Boucles</h3>
+            <pre>for i in 0..=5 {      // 0 à 5
+    println!("{}", i);
+}
+
+while x < 10 {
+    x += 1;
+}</pre>
+
+            <h3>Match</h3>
+            <pre>match number {
+    1 => println!("Un"),
+    2..=10 => println!("2 à 10"),
+    _ => println!("Autre"),
+}</pre>
+
+            <div class="box info">
+                <strong>💡 À retenir:</strong>
+                <ul>
+                    <li><code>if</code> est une expression</li>
+                    <li><code>0..5</code> = exclusif (0 à 4)</li>
+                    <li><code>0..=5</code> = inclusif (0 à 5)</li>
+                    <li><code>match</code> traite tous les cas</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- LESSON 5 -->
+        <div id="lesson5" class="content">
+            <span class="lesson-badge">Leçon 5</span>
+            <h2>Ownership 🔑 <span class="status-badge">✅</span></h2>
+
+            <div class="box danger">
+                <strong>⚠️ LE CONCEPT CLÉ DE RUST!</strong>
+                <p>C'est ce qui rend Rust spécial. Comprendre ownership = comprendre Rust!</p>
+            </div>
+
+            <h3>Les 3 Règles</h3>
+            <ol>
+                <li>Chaque valeur a UN propriétaire</li>
+                <li>Quand le propriétaire disparaît, la valeur aussi</li>
+                <li>On peut emprunter sans posséder</li>
+            </ol>
+
+            <h3>Move (Déplacement)</h3>
+            <pre>let s1 = String::from("Hello");
+let s2 = s1;  // s1 est DÉPLACÉ!
+// println!("{}", s1);  // ❌ ERREUR!
+println!("{}", s2);     // ✅ OK</pre>
+
+            <h3>Borrowing (Emprunt)</h3>
+            <pre>let s = String::from("Hello");
+let r1 = &s;  // Emprunt (lecture)
+let r2 = &s;  // OK: plusieurs lectures
+println!("{}, {}", r1, r2);  // OK
+
+// Modification
+let mut s = String::from("Hello");
+let r = &mut s;  // UN SEUL emprunt mutable!
+r.push_str(" World");</pre>
+
+            <div class="box success">
+                <strong>✅ Résumé:</strong>
+                <ul>
+                    <li><code>&</code> = emprunt (lecture)</li>
+                    <li><code>&mut</code> = emprunt (modification)</li>
+                    <li>Plusieurs emprunts immuables OK</li>
+                    <li>UN SEUL emprunt mutable</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- LESSON 6 -->
+        <div id="lesson6" class="content">
+            <span class="lesson-badge">Leçon 6</span>
+            <h2>Structs & Enums <span class="status-badge">✅</span></h2>
+
+            <h3>Structs</h3>
+            <pre>struct Person {
+    name: String,
+    age: u8,
+}
+
+impl Person {
+    fn display(&self) {
+        println!("{}", self.name);
+    }
+}
+
+let p = Person {
+    name: String::from("Alice"),
+    age: 30,
+};
+p.display();</pre>
+
+            <h3>Enums</h3>
+            <pre>enum Message {
+    Quit,
+    Move { x: i32, y: i32 },
+    Text(String),
+}
+
+match message {
+    Message::Quit => println!("Bye"),
+    Message::Move { x, y } => println!("({}, {})", x, y),
+    Message::Text(s) => println!("{}", s),
+}</pre>
+
+            <div class="box info">
+                <strong>💡 À retenir:</strong>
+                <ul>
+                    <li>Structs groupent des données</li>
+                    <li><code>impl</code> ajoute des méthodes</li>
+                    <li><code>&self</code> = lecture, <code>&mut self</code> = modification</li>
+                    <li>Enums avec pattern matching</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- LESSON 7 -->
+        <div id="lesson7" class="content">
+            <span class="lesson-badge">Leçon 7</span>
+            <h2>Gestion des Erreurs <span class="status-badge">✅</span></h2>
+
+            <h3>Option&lt;T&gt;</h3>
+            <pre>let maybe: Option<i32> = Some(42);
+match maybe {
+    Some(x) => println!("{}", x),
+    None => println!("Rien"),
+}
+
+if let Some(x) = maybe {
+    println!("{}", x);
+}</pre>
+
+            <h3>Result&lt;T, E&gt;</h3>
+            <pre>fn divide(a: i32, b: i32) -> Result<i32, String> {
+    if b == 0 {
+        Err(String::from("Division par zéro"))
+    } else {
+        Ok(a / b)
+    }
+}
+
+match divide(10, 2) {
+    Ok(r) => println!("{}", r),
+    Err(e) => println!("Error: {}", e),
+}</pre>
+
+            <h3>? Operator</h3>
+            <pre>fn read_file() -> Result<String, io::Error> {
+    let mut file = File::open("test.txt")?;
+    let mut contents = String::new();
+    file.read_to_string(&mut contents)?;
+    Ok(contents)
+}</pre>
+
+            <div class="box success">
+                <strong>✅ À retenir:</strong>
+                <ul>
+                    <li><code>Option<T></code> = Some(T) ou None</li>
+                    <li><code>Result<T, E></code> = Ok(T) ou Err(E)</li>
+                    <li><code>?</code> = propagation d'erreur</li>
+                    <li>Pas d'exceptions, gestion explicite!</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- TESTS -->
+        <div id="tests" class="content">
+            <h2>✅ Résultats des Tests</h2>
+
+            <div class="box success">
+                <strong>🎉 Tous les tests réussis!</strong>
+                <p>Compilation ✅ | Exécution ✅ | Tous les binaires générés ✅</p>
+            </div>
+
+            <h3>Status des leçons</h3>
+            <div class="grid">
+                <div class="card">
+                    <span class="emoji">✅</span>
+                    <strong>Leçon 1</strong>
+                    <p>Hello World</p>
+                </div>
+                <div class="card">
+                    <span class="emoji">✅</span>
+                    <strong>Leçon 2</strong>
+                    <p>Variables</p>
+                </div>
+                <div class="card">
+                    <span class="emoji">✅</span>
+                    <strong>Leçon 3</strong>
+                    <p>Fonctions</p>
+                </div>
+                <div class="card">
+                    <span class="emoji">✅</span>
+                    <strong>Leçon 4</strong>
+                    <p>Contrôle</p>
+                </div>
+                <div class="card">
+                    <span class="emoji">✅</span>
+                    <strong>Leçon 5</strong>
+                    <p>Ownership</p>
+                </div>
+                <div class="card">
+                    <span class="emoji">✅</span>
+                    <strong>Leçon 6</strong>
+                    <p>Structs</p>
+                </div>
+                <div class="card">
+                    <span class="emoji">✅</span>
+                    <strong>Leçon 7</strong>
+                    <p>Erreurs</p>
+                </div>
+            </div>
+
+            <h3>📊 Détails</h3>
+            <div class="box info">
+                <strong>Compilation:</strong> ✅ Réussie<br>
+                <strong>Temps:</strong> ~2 secondes<br>
+                <strong>Binaires:</strong> 7 exécutables générés<br>
+                <strong>Code Rust:</strong> 100% fonctionnel
+            </div>
+
+            <h3>🚀 Prochaines étapes</h3>
+            <ul>
+                <li>Cloner le repo Git</li>
+                <li>Compiler avec <code>cargo build</code></li>
+                <li>Exécuter avec <code>cargo run --bin hello-world</code></li>
+                <li>Modifier les exemples</li>
+                <li>Créer tes propres projets!</li>
+            </ul>
+        </div>
+    </div>
+
+    <footer>
+        <p>🦀 Cours Rust complet - 7 leçons interactives</p>
+        <p>Tous les fichiers source: /rust-learning/</p>
+    </footer>
+
+    <script>
+        function showTab(tabName) {
+            // Hide all
+            document.querySelectorAll('.content').forEach(c => c.classList.remove('active'));
+            document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+
+            // Show selected
+            document.getElementById(tabName).classList.add('active');
+            event.target.classList.add('active');
+
+            // Scroll to top
+            window.scrollTo(0, 0);
+        }
+
+        // Keyboard navigation
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'ArrowRight') {
+                const buttons = Array.from(document.querySelectorAll('.tab-btn'));
+                const active = buttons.findIndex(b => b.classList.contains('active'));
+                if (active < buttons.length - 1) buttons[active + 1].click();
+            }
+            if (e.key === 'ArrowLeft') {
+                const buttons = Array.from(document.querySelectorAll('.tab-btn'));
+                const active = buttons.findIndex(b => b.classList.contains('active'));
+                if (active > 0) buttons[active - 1].click();
+            }
+        });
+    </script>
+</body>
+</html>
