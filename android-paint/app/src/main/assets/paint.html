@@ -1,0 +1,439 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Paint App - Dessine et Amuse-toi!</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .container {
+            display: flex;
+            gap: 20px;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            padding: 20px;
+            max-width: 1200px;
+            width: 100%;
+        }
+
+        .toolbar {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            background: #f5f5f5;
+            padding: 20px;
+            border-radius: 10px;
+            min-width: 180px;
+        }
+
+        .toolbar-section {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .toolbar-title {
+            font-weight: 600;
+            font-size: 12px;
+            text-transform: uppercase;
+            color: #667eea;
+            letter-spacing: 1px;
+        }
+
+        button {
+            padding: 10px 15px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            font-size: 14px;
+        }
+
+        .tool-btn {
+            background: white;
+            color: #333;
+            border: 2px solid #ddd;
+        }
+
+        .tool-btn:hover {
+            background: #667eea;
+            color: white;
+            border-color: #667eea;
+        }
+
+        .tool-btn.active {
+            background: #667eea;
+            color: white;
+            border-color: #667eea;
+        }
+
+        .action-btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        .action-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        .clear-btn {
+            background: #ff6b6b;
+            color: white;
+        }
+
+        .clear-btn:hover {
+            background: #ff5252;
+            transform: translateY(-2px);
+        }
+
+        .color-input {
+            width: 100%;
+            height: 45px;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .color-input:hover {
+            border-color: #667eea;
+        }
+
+        .slider-group {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .slider-label {
+            font-size: 12px;
+            color: #666;
+            font-weight: 500;
+        }
+
+        .slider-value {
+            font-size: 11px;
+            color: #999;
+        }
+
+        input[type="range"] {
+            width: 100%;
+            cursor: pointer;
+        }
+
+        .canvas-container {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        canvas {
+            border: 2px solid #ddd;
+            border-radius: 10px;
+            background: white;
+            cursor: crosshair;
+            display: block;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .status {
+            text-align: center;
+            font-size: 12px;
+            color: #999;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                flex-direction: column;
+            }
+
+            .toolbar {
+                min-width: unset;
+                flex-direction: row;
+                flex-wrap: wrap;
+            }
+
+            canvas {
+                max-width: 100%;
+            }
+        }
+
+        .preset-colors {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 5px;
+        }
+
+        .color-preset {
+            width: 100%;
+            height: 30px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+
+        .color-preset:hover {
+            transform: scale(1.05);
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="toolbar">
+            <div class="toolbar-section">
+                <div class="toolbar-title">🎨 Outils</div>
+                <button class="tool-btn active" data-tool="pen">✏️ Crayon</button>
+                <button class="tool-btn" data-tool="eraser">🧹 Gomme</button>
+                <button class="tool-btn" data-tool="line">📏 Ligne</button>
+            </div>
+
+            <div class="toolbar-section">
+                <div class="toolbar-title">🎯 Couleur</div>
+                <input type="color" id="colorPicker" class="color-input" value="#000000">
+                <div class="preset-colors">
+                    <button class="color-preset" style="background: #000000;" data-color="#000000"></button>
+                    <button class="color-preset" style="background: #FF0000;" data-color="#FF0000"></button>
+                    <button class="color-preset" style="background: #00FF00;" data-color="#00FF00"></button>
+                    <button class="color-preset" style="background: #0000FF;" data-color="#0000FF"></button>
+                    <button class="color-preset" style="background: #FFFF00;" data-color="#FFFF00"></button>
+                    <button class="color-preset" style="background: #FF00FF;" data-color="#FF00FF"></button>
+                </div>
+            </div>
+
+            <div class="toolbar-section">
+                <div class="toolbar-title">📏 Taille</div>
+                <div class="slider-group">
+                    <label class="slider-label">Pinceau: <span id="brushValue">5</span>px</label>
+                    <input type="range" id="brushSize" min="1" max="50" value="5">
+                </div>
+                <div class="slider-group">
+                    <label class="slider-label">Opacité: <span id="opacityValue">100</span>%</label>
+                    <input type="range" id="opacity" min="0" max="100" value="100">
+                </div>
+            </div>
+
+            <div class="toolbar-section">
+                <div class="toolbar-title">⚙️ Actions</div>
+                <button class="action-btn" id="undoBtn">↶ Annuler</button>
+                <button class="clear-btn" id="clearBtn">🗑️ Effacer tout</button>
+                <button class="action-btn" id="downloadBtn">⬇️ Télécharger</button>
+            </div>
+        </div>
+
+        <div class="canvas-container">
+            <canvas id="canvas"></canvas>
+            <div class="status">Position: <span id="coordX">0</span>, <span id="coordY">0</span></div>
+        </div>
+    </div>
+
+    <script>
+        const canvas = document.getElementById('canvas');
+        const ctx = canvas.getContext('2d');
+        const colorPicker = document.getElementById('colorPicker');
+        const brushSize = document.getElementById('brushSize');
+        const opacity = document.getElementById('opacity');
+        const brushValue = document.getElementById('brushValue');
+        const opacityValue = document.getElementById('opacityValue');
+        const undoBtn = document.getElementById('undoBtn');
+        const clearBtn = document.getElementById('clearBtn');
+        const downloadBtn = document.getElementById('downloadBtn');
+        const coordX = document.getElementById('coordX');
+        const coordY = document.getElementById('coordY');
+
+        let isDrawing = false;
+        let currentTool = 'pen';
+        let startX, startY;
+        const history = [];
+        const maxHistory = 50;
+
+        // Responsive canvas
+        function resizeCanvas() {
+            const rect = canvas.parentElement.getBoundingClientRect();
+            canvas.width = Math.min(800, rect.width - 20);
+            canvas.height = Math.min(600, window.innerHeight - 200);
+            ctx.lineCap = 'round';
+            ctx.lineJoin = 'round';
+            if (history.length > 0) {
+                const imageData = history[history.length - 1];
+                ctx.putImageData(imageData, 0, 0);
+            }
+        }
+
+        resizeCanvas();
+        window.addEventListener('resize', resizeCanvas);
+
+        function saveState() {
+            const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+            history.push(imageData);
+            if (history.length > maxHistory) {
+                history.shift();
+            }
+        }
+
+        function undo() {
+            if (history.length > 0) {
+                history.pop();
+                if (history.length > 0) {
+                    const imageData = history[history.length - 1];
+                    ctx.putImageData(imageData, 0, 0);
+                } else {
+                    ctx.clearRect(0, 0, canvas.width, canvas.height);
+                }
+            }
+        }
+
+        function clearCanvas() {
+            if (confirm('Êtes-vous sûr de vouloir effacer tout?')) {
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+                history.length = 0;
+                saveState();
+            }
+        }
+
+        function downloadImage() {
+            const link = document.createElement('a');
+            link.download = 'mon-dessin.png';
+            link.href = canvas.toDataURL();
+            link.click();
+        }
+
+        function drawLine(fromX, fromY, toX, toY) {
+            ctx.strokeStyle = colorPicker.value;
+            ctx.globalAlpha = opacity.value / 100;
+            ctx.lineWidth = brushSize.value;
+            ctx.beginPath();
+            ctx.moveTo(fromX, fromY);
+            ctx.lineTo(toX, toY);
+            ctx.stroke();
+            ctx.globalAlpha = 1;
+        }
+
+        function erase(x, y) {
+            ctx.clearRect(x - brushSize.value / 2, y - brushSize.value / 2, brushSize.value, brushSize.value);
+        }
+
+        // Tool buttons
+        document.querySelectorAll('.tool-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                document.querySelectorAll('.tool-btn').forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+                currentTool = btn.dataset.tool;
+            });
+        });
+
+        // Color presets
+        document.querySelectorAll('.color-preset').forEach(btn => {
+            btn.addEventListener('click', () => {
+                colorPicker.value = btn.dataset.color;
+            });
+        });
+
+        // Brush size
+        brushSize.addEventListener('input', () => {
+            brushValue.textContent = brushSize.value;
+        });
+
+        // Opacity
+        opacity.addEventListener('input', () => {
+            opacityValue.textContent = opacity.value;
+        });
+
+        // Action buttons
+        undoBtn.addEventListener('click', undo);
+        clearBtn.addEventListener('click', clearCanvas);
+        downloadBtn.addEventListener('click', downloadImage);
+
+        // Canvas events
+        canvas.addEventListener('mousedown', (e) => {
+            isDrawing = true;
+            const rect = canvas.getBoundingClientRect();
+            startX = e.clientX - rect.left;
+            startY = e.clientY - rect.top;
+            saveState();
+        });
+
+        canvas.addEventListener('mousemove', (e) => {
+            const rect = canvas.getBoundingClientRect();
+            const x = e.clientX - rect.left;
+            const y = e.clientY - rect.top;
+
+            coordX.textContent = Math.round(x);
+            coordY.textContent = Math.round(y);
+
+            if (!isDrawing) return;
+
+            if (currentTool === 'pen') {
+                drawLine(startX, startY, x, y);
+                startX = x;
+                startY = y;
+            } else if (currentTool === 'eraser') {
+                erase(x, y);
+            }
+        });
+
+        canvas.addEventListener('mouseup', () => {
+            isDrawing = false;
+        });
+
+        canvas.addEventListener('mouseleave', () => {
+            isDrawing = false;
+        });
+
+        // Touch support for mobile
+        canvas.addEventListener('touchstart', (e) => {
+            e.preventDefault();
+            const rect = canvas.getBoundingClientRect();
+            const touch = e.touches[0];
+            startX = touch.clientX - rect.left;
+            startY = touch.clientY - rect.top;
+            isDrawing = true;
+            saveState();
+        });
+
+        canvas.addEventListener('touchmove', (e) => {
+            e.preventDefault();
+            const rect = canvas.getBoundingClientRect();
+            const touch = e.touches[0];
+            const x = touch.clientX - rect.left;
+            const y = touch.clientY - rect.top;
+
+            if (!isDrawing) return;
+
+            if (currentTool === 'pen') {
+                drawLine(startX, startY, x, y);
+                startX = x;
+                startY = y;
+            } else if (currentTool === 'eraser') {
+                erase(x, y);
+            }
+        });
+
+        canvas.addEventListener('touchend', () => {
+            isDrawing = false;
+        });
+
+        // Initial state
+        saveState();
+    </script>
+</body>
+</html>
